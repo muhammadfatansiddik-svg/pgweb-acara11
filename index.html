@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acara 11 PGWEB</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Leaflet GeoServer Request -->
+    <script src="lib/L.Geoserver.js"></script>
+
+    <script>
+        var map = L.map("map").setView([-7.677567, 110.406899], 12);
+
+        var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        });
+        osm.addTo(map);
+
+        // PASTIKAN nama layer sesuai kolom "Name" di Layer Preview GeoServer
+        var wmsLayer1 = L.Geoserver.wms("http://localhost:8080/geoserver/wms", {
+            layers: "webPGweb:Batas_Administrasi_Kecamatan_DIY",
+            transparent: true,
+        });
+        wmsLayer1.addTo(map);
+
+        var wmsLayer2 = L.Geoserver.wms("http://localhost:8080/geoserver/wms", {
+            layers: "webPGweb:jalan_diy",
+            transparent: true,
+        });
+        wmsLayer2.addTo(map);
+        
+        var wmsLayer3 = L.Geoserver.wms("https://geoportal.slemankab.go.id/geoserver/geonode/mitra_sppg_sleman_091bd6363f14a753345804c17a666bab/ows", {
+            layers: "geonode:mitra_sppg_sleman_091bd6363f14a753345804c17a666bab",
+            transparent: true,
+        });
+        wmsLayer3.addTo(map);
+        var baseMaps = {
+            "OpenStreetMap": osm
+        };
+
+        var overlayMaps = {
+            "Batas Administrasi Kecamatan": wmsLayer1,
+            "Jalan": wmsLayer2,
+            "SPPG":wmsLayer3
+        };
+
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
+    </script>
+</body>
+
+</html>
